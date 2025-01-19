@@ -1,6 +1,6 @@
 package com.rajabi.starwars.presentation.viewmodel.search
 
-import com.rajabi.starwars.data.model.Character
+import com.rajabi.starwars.data.model.search.Character
 
 sealed class SearchUiState {
     data object Idle : SearchUiState()

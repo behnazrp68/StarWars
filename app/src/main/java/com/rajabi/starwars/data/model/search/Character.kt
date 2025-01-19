@@ -1,4 +1,4 @@
-package com.rajabi.starwars.data.model
+package com.rajabi.starwars.data.model.search
 
 
 import com.google.gson.annotations.SerializedName
