@@ -1,4 +1,4 @@
-package com.rajabi.starwars.presentation.viewmodel.search
+package com.rajabi.starwars.presentation.compose.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,10 +35,6 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             searchCharacterUseCase.execute(query)
                 .onStart { _uiState.value = SearchUiState.Loading } // Emit loading state
-                .catch { e ->
-                    _uiState.value = SearchUiState.Error("Error: ${e.message}")
-                    _uiEvent.emit(SearchUiEvent.ShowToast("An error occurred: ${e.message}"))
-                }
                 .collect { resource ->
                     when (resource) {
                         is Resource.Loading -> _uiState.value = SearchUiState.Loading

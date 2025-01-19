@@ -10,6 +10,6 @@ data class ComprehensiveDetailModel(
     val homeWorld: String="",
     val population: String="",
     val filmsTitle: List<String> = emptyList(),
-    val openingCrawl: String = ""
+    val openingCrawl: List<String> = emptyList()
 
     )

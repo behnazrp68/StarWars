@@ -1,4 +1,4 @@
-package com.rajabi.starwars.presentation.viewmodel.search
+package com.rajabi.starwars.presentation.compose.search
 
 sealed class SearchUiAction {
     data class Search(val query: String) : SearchUiAction()

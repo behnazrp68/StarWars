@@ -6,10 +6,13 @@ import com.rajabi.starwars.data.model.detail.Films
 import com.rajabi.starwars.data.model.detail.Planets
 import com.rajabi.starwars.data.model.detail.Species
 import com.rajabi.starwars.data.repository.datasource.StarWarsRemoteDataSource
+import com.rajabi.starwars.domain.model.ComprehensiveDetailModel
 import com.rajabi.starwars.domain.repository.StarWarsRepository
 import com.rajabi.starwars.util.Resource
 import com.rajabi.starwars.util.UnifiedModelMapper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -22,38 +25,89 @@ class StarWarsRepositoryImpl @Inject constructor(
 
 ) : StarWarsRepository {
     override suspend fun searchCharacter(name: String): Flow<Resource<List<Character>>> =
-        remoteDataSource.searchCharacter(name)
+        flow {
+            emit(Resource.Loading) // Emit loading state
 
-    override suspend fun getCharacterDetails(id: String): Flow<Resource<CharacterDetailsResponse>> =
-        remoteDataSource.getCharacterDetails(id)
+            if (name.isBlank()) {
+                emit(Resource.Success(emptyList())) // Emit empty list for empty query
+                return@flow
+            }
 
-    override suspend fun getCharacterDetailsByUrl(url: String): Flow<Resource<CharacterDetailsResponse>>  = flow { // Replace `Any` with the appropriate type
-        emit(Resource.Loading) // Emit loading state
-
-        val response = remoteDataSource.getCharacterDetailsByUrl(url)
-
-        if (response.isSuccessful) {
-            val result = response.body()!!
-            emit(Resource.Success(result))
-        } else {
-            emit(Resource.Failure("Error: ${response.message()}"))
+            val response = remoteDataSource.searchCharacter(name)
+            if (response.isSuccessful) {
+                val results = response.body()?.characters ?: emptyList()
+                emit(Resource.Success(results))
+            } else {
+                emit(Resource.Failure("Error: ${response.message()}"))
+            }
+        }.catch { e ->
+            emit(Resource.Failure("Exception occurred"))
+            e.printStackTrace()
         }
-    }.catch { e ->
-        emit(Resource.Failure("Exception occurred"))
-        e.printStackTrace()
+
+    override suspend fun getCharacterDetails(id: String): Flow<Resource<CharacterDetailsResponse>> {
+        TODO("Not yet implemented")
+    }
+
+
+    override suspend fun getCharacterDetailsByUrl(url: String): Flow<Resource<ComprehensiveDetailModel>> = flow {
+        emit(Resource.Loading)
+
+        try {
+            // Step 1: Fetch character details
+            val response = remoteDataSource.getCharacterDetailsByUrl(url)
+            if (!response.isSuccessful || response.body() == null) {
+                emit(Resource.Failure("Error fetching character details: ${response.message()}"))
+                return@flow
+            }
+            val characterDetails = response.body()!!
+
+            // Step 2: Perform subsequent API calls in parallel
+            val comprehensiveDetailModel = coroutineScope {
+                val filmsDeferred = async {
+                    characterDetails.films.mapNotNull { filmUrl ->
+                        try {
+                            remoteDataSource.getFilmsByUrl(filmUrl).takeIf { it.isSuccessful }?.body()
+                        } catch (e: Exception) {
+                            null // Log or handle specific API call failures
+                        }
+                    }
+                }
+
+                val speciesDeferred = async {
+                    characterDetails.species.mapNotNull { speciesUrl ->
+                        try {
+                            remoteDataSource.getSpeciesByUrl(speciesUrl).takeIf { it.isSuccessful }?.body()
+                        } catch (e: Exception) {
+                            null // Log or handle specific API call failures
+                        }
+                    }
+                }
+
+                val planetDeferred = async {
+                    try {
+                        characterDetails.homeworld?.let { homeworldUrl ->
+                            remoteDataSource.getPlanetsByUrl(homeworldUrl).takeIf { it.isSuccessful }?.body()
+                        }
+                    } catch (e: Exception) {
+                        null // Log or handle specific API call failures
+                    }
+                }
+
+                mapper.mapToComprehensiveDetailModel(
+                    characterDetails = characterDetails,
+                    films = filmsDeferred.await(),
+                    species = speciesDeferred.await(),
+                    planet = planetDeferred.await()
+                )
+            }
+
+            emit(Resource.Success(comprehensiveDetailModel))
+        } catch (e: Exception) {
+            emit(Resource.Failure("Exception occurred: ${e.message}"))
+            e.printStackTrace()
+        }
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getFilmsByUrl(url: String): Flow<Resource<Films>> {
-        return remoteDataSource.getFilmsByUrl(url)
-    }
-
-    override suspend fun getSpeciesByUrl(url: String): Flow<Resource<Species>> {
-        return remoteDataSource.getSpeciesByUrl(url)
-    }
-
-    override suspend fun getPlanetsByUrl(url: String): Flow<Resource<Planets>> {
-        return remoteDataSource.getPlanetsByUrl(url)
-    }
-
-
 }
+

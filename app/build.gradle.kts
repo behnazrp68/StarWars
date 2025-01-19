@@ -55,7 +55,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
+    ksp {
+        arg("ksp.incremental", "false")
+    }
 }
 
 

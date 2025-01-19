@@ -6,7 +6,7 @@ data class Films(
     val director: String,
     val edited: String,
     val episodeId: Int,
-    val openingCrawl: String,
+    val opening_crawl: String,
     val planets: List<String>,
     val producer: String,
     val releaseDate: String,

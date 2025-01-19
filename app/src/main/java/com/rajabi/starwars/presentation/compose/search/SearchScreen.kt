@@ -25,11 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.rajabi.starwars.data.model.Character
-import com.rajabi.starwars.presentation.viewmodel.search.SearchUiAction
-import com.rajabi.starwars.presentation.viewmodel.search.SearchUiEvent
-import com.rajabi.starwars.presentation.viewmodel.search.SearchUiState
-import com.rajabi.starwars.presentation.viewmodel.search.SearchViewModel
+import com.rajabi.starwars.data.model.search.Character
+import com.rajabi.starwars.presentation.compose.component.CharacterItem
+import com.rajabi.starwars.presentation.compose.search.SearchUiAction
+import com.rajabi.starwars.presentation.compose.search.SearchUiEvent
+import com.rajabi.starwars.presentation.compose.search.SearchUiState
+import com.rajabi.starwars.presentation.compose.search.SearchViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -47,7 +48,7 @@ fun SearchScreen(navController: NavHostController, viewModel: SearchViewModel = 
     }
 
     var query by remember { mutableStateOf("") }
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(50.dp))
     Column(modifier = Modifier.padding(16.dp)) {
         // Search Input
         TextField(
@@ -98,21 +99,4 @@ fun CharacterList(characters: List<Character>, navController: NavHostController)
     }
 }
 
-@Composable
-fun CharacterItem(
-    character: com.rajabi.starwars.data.model.Character,
-    navController: NavHostController
-) {
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable {
-                val encodedUrl = URLEncoder.encode(character.url, StandardCharsets.UTF_8.toString())
-                navController.navigate("character_detail/$encodedUrl")
-            }
-    ) {
-        Text("Name: ${character.name}")
-        Text("Birth Year: ${character.birthYear}")
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
+

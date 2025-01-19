@@ -1,4 +1,4 @@
-package com.rajabi.starwars.presentation.viewmodel.search
+package com.rajabi.starwars.presentation.compose.search
 
 import com.rajabi.starwars.data.model.search.Character
 
