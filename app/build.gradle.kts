@@ -92,6 +92,8 @@ dependencies {
     testImplementation(libs.junit)
     implementation(libs.retrofit.logging)
 
+    testImplementation(libs.mockwebserver)
+    testImplementation (libs.truth)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
