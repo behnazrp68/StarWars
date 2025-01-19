@@ -1,13 +1,15 @@
 # StarWars
 
-this is an application contains two screen that user can enter superstar name  search from api  and displays detail of it 
+This is an application that contains two screens: one where the user can enter a superstar's name to search from an API, and another that displays the details of the superstar.
 
 ## Clean architecture with 3 main modules
 - Data ( network and model classes)
 - Domain (for business logic and repository)
 - Presentation (for UI logic, with MVI and hilt)
 
-
+## Tests
+- Unit tests for api 
+  
 ## Other useful features
 - Dependency injection (with [Hilt])
 - Network (with [Retrofit])
