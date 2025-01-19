@@ -1,12 +1,33 @@
 package com.rajabi.starwars.util
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.rajabi.starwars.data.model.detail.Films
+import com.rajabi.starwars.data.model.detail.Planets
+import com.rajabi.starwars.data.model.detail.Species
+import com.rajabi.starwars.domain.model.ComprehensiveDetailModel
 
-fun formatDate(date :Long) :String{
-    val myDate = Date(date)
-    val formatDate= SimpleDateFormat("EEE ,d MM  hh:mm aaa" , Locale.getDefault())
-    return formatDate.format(myDate)
+class UnifiedModelMapper {
+    fun Films.toUnifiedModel(): ComprehensiveDetailModel {
+        return ComprehensiveDetailModel(
 
+            name = "",
+            filmsTitle = listOf(title),
+            openingCrawl = openingCrawl,
+            height = "",
+            language = "",
+            birthYear = ""
+        )
+    }
+
+    fun Species.toUnifiedModel(): ComprehensiveDetailModel {
+        return ComprehensiveDetailModel(
+            homeWorld = homeWorld,
+            language = language
+        )
+    }
+
+    fun Planets.toUnifiedModel(): ComprehensiveDetailModel {
+        return ComprehensiveDetailModel(
+            population = population
+        )
+    }
 }

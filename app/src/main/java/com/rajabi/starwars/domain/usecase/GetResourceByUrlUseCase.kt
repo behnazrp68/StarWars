@@ -9,6 +9,6 @@ class GetResourceByUrlUseCase(
     private val repository: StarWarsRepository
 ) {
     suspend fun execute(url:String): Flow<Resource<CharacterDetailsResponse>> {
-        return repository.getResourceByUrl(url)
+        return repository.getCharacterDetailsByUrl(url)
     }
 }
