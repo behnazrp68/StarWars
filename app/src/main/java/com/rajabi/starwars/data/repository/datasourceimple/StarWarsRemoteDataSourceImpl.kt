@@ -1,13 +1,12 @@
 package com.rajabi.starwars.data.repository.datasourceimple
 
-import com.rajabi.starwars.data.model.Character
+import com.rajabi.starwars.data.model.search.Character
 import com.rajabi.starwars.data.model.detail.CharacterDetailsResponse
 import com.rajabi.starwars.data.network.SwApiService
 import com.rajabi.starwars.data.repository.datasource.StarWarsRemoteDataSource
 import com.rajabi.starwars.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 
 class StarWarsRemoteDataSourceImpl(private val apiService: SwApiService) :

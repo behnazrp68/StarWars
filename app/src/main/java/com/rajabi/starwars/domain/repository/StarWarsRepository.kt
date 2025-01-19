@@ -1,6 +1,6 @@
 package com.rajabi.starwars.domain.repository
 
-import com.rajabi.starwars.data.model.Character
+import com.rajabi.starwars.data.model.search.Character
 import com.rajabi.starwars.data.model.detail.CharacterDetailsResponse
 import com.rajabi.starwars.util.Resource
 import kotlinx.coroutines.flow.Flow

@@ -1,6 +1,6 @@
 package com.rajabi.starwars.data.network
 
-import com.rajabi.starwars.data.model.CharactersResponse
+import com.rajabi.starwars.data.model.search.CharactersResponse
 import com.rajabi.starwars.data.model.detail.CharacterDetailsResponse
 import retrofit2.Response
 import retrofit2.http.GET
